@@ -1,0 +1,40 @@
+body{
+    background-color : black;
+    height: 100vh;
+}
+
+:root{
+    --cell-size : 100px;
+}
+.flex{
+    display: flex;
+}
+
+.center{
+    align-items: center;
+    justify-content: center;
+}
+
+
+.chess-board{
+    background-color:red;
+    width: calc(var(--cell-size) * 8);
+    height: calc(var(--cell-size) * 8);
+    display : grid;
+    grid-template-columns: repeat(8,var(--cell-size));
+}
+
+.cell{
+    width : var(--cell-size);
+    height: var(--cell-size);
+    border : 1px solid black;
+    cursor: pointer;
+}
+
+.c1{
+    background-color : rgb(192, 169, 129);
+}
+
+.c2{
+    background-color : rgb(129, 94, 38);
+}
