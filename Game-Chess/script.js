@@ -2,9 +2,10 @@ const cells = document.getElementsByClassName('cell')
 
 for (var i = 0; i < cells.length; i++){
     cells[i].addEventListener('click',(e)=>{
-        console.log(e.target.id)
+        chess.chessTurn(e.target,e.target.id)
     })
 }
+
 
 //    0 -> black
 //    1 -> white
@@ -33,31 +34,11 @@ let pieceToSvg = {
 }
 
 
-function loadBoard(board){
-    cellIndex = 0
-    for (var i = 0; i < 8;i++){
-        for (var j = 0; j < 8 ;j++){
-            if (board[i][j] != '-'){
-                cells[cellIndex].innerHTML = `<img src = "${pieceToSvg[board[i][j]]}" width = "100px" height = "100px"></img`
-            }
-            cellIndex++
-        }
+
+class Knight{
+    constructor(color,r,c){
+        this.color = color;
+        this.x = r
+        this.y = c
     }
 }
-function initBoard(){
-    board = [
-        ['02','03','04','05','06','04','03','02'],
-        ['07','07','07','07','07','07','07','07'],
-        ['-','-','-','-','-','-','-','-','-','-'],
-        ['-','-','-','-','-','-','-','-','-','-'],
-        ['-','-','-','-','-','-','-','-','-','-'],
-        ['-','-','-','-','-','-','-','-','-','-'],
-        ['17','17','17','17','17','17','17','17'],
-        ['12','13','14','15','16','14','13','12']
-    ]
-    loadBoard(board)
-    return board
-}
-
-initBoard()
-
