@@ -3,7 +3,7 @@ const turnText = document.getElementById('turn')
 
 const startScreen =document.getElementById('startScreen')
 const gameScreen = document.getElementById('gameScreen')
-const gameOverScreen = document.getElementById('gameOverScreen')
+
 
 
 class TicTacToe{
@@ -36,7 +36,6 @@ class TicTacToe{
                 return
             }
             if (this.won){
-                console.log('Draw')
                 turnText.innerText = ` ${this.players[this.turn]} has Won!`
                 return
             }
