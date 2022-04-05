@@ -9,14 +9,14 @@ function delay(ms) {
     }) 
 }
 
-const BAR_GAP = 2
-const BAR_WIDTH = 20
+const BAR_GAP = 1
+const BAR_WIDTH = 10
 const BAR_SCALE = 4
 const BAR_COLOR = 'lightblue'
 const BAR_COMP_COLOR = 'blue'
 const BAR_SORTED_COLOR = 'green'
 
-var ARR_SIZE = 30
+var ARR_SIZE = 2
 const ARR_START = 2
 const ARR_END = 100
 var DELAY = 1000
