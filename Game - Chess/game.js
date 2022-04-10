@@ -47,11 +47,11 @@ class Chess{
             [this.r1,this.n1,this.b1,this.k,this.q,this.b2,this.n2,this.r2],
             [this.p1,this.p2,this.p3,this.p4,this.p5,this.p6,this.p7,this.p8],
             [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined],
-            [undefined,undefined,this.B1,undefined,undefined,undefined,undefined,undefined],
+            [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined],
             [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined],
             [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined],
             [this.P1,this.P2,this.P3,this.P4,this.P5,this.P6,this.P7,this.P8],
-            [undefined,this.N1,this.B1,this.K,this.Q,this.B2,this.N2,this.R2]
+            [this.R1,this.N1,this.B1,this.K,this.Q,this.B2,this.N2,this.R2]
             ]
         // White Goes first
         this.turn = 1

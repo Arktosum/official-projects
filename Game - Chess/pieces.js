@@ -239,11 +239,14 @@ export class Pawn{
         let attackMoves = []
         
         if (board[r][c].color == 1){
-            legalMoves.push([r-1,c],[r-2,c])
+            legalMoves.push({x:r-1,y:c})
+            legalMoves.push({x:r-2,y:c})
         }
         if(board[r][c].color == 0){
-            legalMoves.push([r+1,c],[r+2,c])
+            legalMoves.push({x:r+1,y:c})
+            legalMoves.push({x:r+2,y:c})
         }
+        console.log(legalMoves)
         return [legalMoves, attackMoves]
     }
 }
