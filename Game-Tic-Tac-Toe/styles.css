@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+*{
+    margin:0;
+    padding: 0;  
+    font-family: 'Ubuntu', sans-serif;
+}
+
+body{
+    min-height: 100vh;
+}
+
+:root{
+    --cell-size : 300px;
+    --grid-border-size : 5px solid black;
+}
+.flex{
+    display:flex;
+}
+
+.center{
+    justify-content:center;
+    align-items:center;
+}
+
+#gameScreen{
+    width: 900px;
+    height:1000px;
+}
+
+.text-container{
+    width: 900px;
+    height: 100px;
+    display : flex;
+    flex-direction: column;
+    margin-bottom : 200px;
+    padding : 10px;
+    justify-content:center;
+    gap : 100px;
+    align-items:center;
+    font-size:  5em;
+    font-family : arial,sans-serif;
+}
+
+.grid-container{
+    width: 900px;
+    height: 900px;
+    display:grid;
+    grid-template-columns: repeat(3,var(--cell-size));
+}
+
+.cell{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    display : flex;
+    justify-content:center;
+    align-items:center;
+    font-size:  10rem;
+    font-family : 'Courier New', Courier, monospace;
+    cursor :pointer;
+    transition: 0.5s;
+}
+
+.cell:hover{
+    background-color:rgb(200, 220, 245);
+}
+
+.bottom{
+    border-bottom: var(--grid-border-size);
+}
+.left{
+    border-left : var(--grid-border-size);
+}
+.right{
+    border-right: var(--grid-border-size);
+}
+
+#hover-text{
+    font-size:  10rem;
+    font-family : 'Courier New', Courier, monospace;
+    opacity : 0.5;
+    pointer-events: none;
+
+}
+
+
+#startScreen{
+    background-color: lightblue;
+}
+
+.btn{
+    width :500px;
+    height :100px;
+    font-size : 3em;
+    cursor : pointer;
+}
