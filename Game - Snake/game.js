@@ -1,121 +1,231 @@
-const gridElement  = document.createElement('div');
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+const score = document.getElementById("score")
+const time = document.getElementById("time")
 
 
-const GRID_SIZE = 10;
+
 const CELL_SIZE = 100;
+const CELL_GAP = 2
+const GRID_SIZE = 20
+const OUT_CELL = CELL_SIZE + 2*CELL_GAP
+var SPEED = 5
 
-gridElement.style.display  = `grid`;
-gridElement.style.gridTemplateColumns = `repeat(${GRID_SIZE},${CELL_SIZE}px)`
-document.body.appendChild(gridElement);
+const BOARD_COLOR = '#d3d3d3'
+const HEAD_COLOR = 'yellow'
+const BODY_COLOR = 'green'
+const FOOD_COLOR = 'red'
 
-class Cell{
-    constructor(state,id){
-        // 0 : 'none'
-        // 1 : 'snake'
-        // 2 : 'food'
-        let cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.style.width = CELL_SIZE + 'px';
-        cell.style.height = CELL_SIZE + 'px';
-        cell.id = id;
-        switch(state){
-            case 1 : cell.classList.add('snake-cell');
-                    break;
-            case 2 : cell.classList.add('food-cell')
-                    break;
-        }
-        return cell;
+canvas.width = GRID_SIZE * OUT_CELL
+canvas.height = GRID_SIZE * OUT_CELL
+
+
+function Rect(pos,width,height,color){
+    ctx.fillStyle = color
+    ctx.fillRect(pos.x,pos.y,width,height)
+}
+
+Rect({x:0,y:0},canvas.width,canvas.height,'black')
+
+function FOR(length,func){
+    for(let i = 0 ; i < length ; i++){
+        func(i)
     }
 }
 
-
-
-function initBoard(){
-    let board = new Array();
-    for(let i = 0; i < GRID_SIZE ; i++){
-        let subArray = new Array();
-        for(let j = 0; j < GRID_SIZE ; j++){
-            subArray.push(0);
-        }
-        board.push(subArray);
-    }
-    return board;
-}
-
-function displayBoard(board){
-    gridElement.innerHTML = ``
-    for(let i = 0; i < GRID_SIZE ; i++){
-        for(let j = 0; j < GRID_SIZE ; j++){
-            let cell = new Cell(board[i][j],`${i}${j}`)
-            gridElement.appendChild(cell);
+function DFOR(length1,length2,func){
+    for(let i = 0 ; i < length1 ; i++){
+        for(let j = 0 ; j < length2 ; j++){
+            func(i,j)
         }
     }
 }
 
-
-function randomNumber(min, max) { 
-    return Math.floor(Math.random() * (max - min) + min);
-} 
-
-function placeSnake(board,x,y){
-    board[x][y] = 1
-    displayBoard(board)
-    return {x,y}
+function placeCell(pos,color){
+    Rect({x:pos.x*OUT_CELL + CELL_GAP , y: pos.y*OUT_CELL + CELL_GAP},CELL_SIZE,CELL_SIZE,color)
 }
 
-function placeFood(board,snakePos){
-    let x = randomNumber(0,GRID_SIZE-1);
-    let y = randomNumber(0,GRID_SIZE-1);
-    if (x == snakePos[0] && y == snakePos[1]){
-        return placeFood(board,snakePos)
-    }
-    board[x][y] = 2
-    displayBoard(board)
-    return {x,y}
-}
 
-function checkEat(snakePos,foodPos){
-    if (snakePos.x == foodPos.x && snakePos.y == foodPos.y){
+
+
+function insideGrid(pos){
+    if(pos.x >= 0 && pos.x <=GRID_SIZE && pos.y >= 0 && pos.y<GRID_SIZE){
         return true
     }
     return false
 }
-let board = initBoard();
-displayBoard(board);
-let x = randomNumber(0,GRID_SIZE-1);
-let y = randomNumber(0,GRID_SIZE-1);
-let snakeHead = placeSnake(board,x,y);
-let foodPos = placeFood(board,snakeHead)
-let snakeBody = snakeHead
-let snakeBodyArray = [snakeHead]
+
+function equalCoords(pos1,pos2){
+    if(pos1.x == pos2.x && pos1.y == pos2.y){
+        return true
+    }
+    return false
+}
+
+function getRandomNumber(min,max){
+    return Math.floor(Math.random()*(max-min) + min)
+}
 
 
 
-document.body.addEventListener('keypress',(e)=>{
-    console.log(snakeBody)
+document.body.appendChild(canvas)
+
+
+class Pos{
+    constructor(x,y){
+        this.x = x
+        this.y = y
+    }
+}
+
+function displaySnake(Snake){ 
+    for(let i= 0 ; i<Snake.length ; i++){
+        if(i==0){
+            placeCell(Snake[i],HEAD_COLOR)
+        }
+        else{
+            placeCell(Snake[i],BODY_COLOR)
+        }
+    }
+    
+}
+
+
+function getFood(Snake){
+    let x = getRandomNumber(1,GRID_SIZE-2)
+    let y = getRandomNumber(1,GRID_SIZE-2)
+    for(let body of Snake){
+        if (equalCoords({x,y},body)){
+            return getFood(Snake)
+        }
+    }
+    return new Pos(x,y)
+}
+
+// Place Head at Middle of the board
+let HeadPos = new Pos(Math.floor(GRID_SIZE/2),Math.floor(GRID_SIZE/2));
+let Snake = [HeadPos]
+let foodPos = getFood(Snake)
+displaySnake(Snake)
+
+
+
+let inputDir = new Pos(0,0)
+
+function updateHead(){
+    let head = Snake[0]
+    let oldPos = {x: head.x, y: head.y}
+    head.x += inputDir.x
+    head.y += inputDir.y
+    return oldPos
+}
+function updateSnake(OldHead){
+    let NEW = OldHead
+    for(let i=0; i<Snake.length; i++){
+        if (i!=0){
+            //store
+            let old = Snake[i]
+            // update
+            Snake[i] = NEW
+            // propagate
+            NEW = old
+        }
+    }
+}
+
+function gameOver(){
+    let head = Snake[0]
+    let hitBoundary = ()=>{
+        let hit = false
+        DFOR(GRID_SIZE,GRID_SIZE,(i,j)=>{
+            if (i==0 || j==0 || i == GRID_SIZE -1 || j == GRID_SIZE-1){
+                if (head.x == 0 || head.y == 0 || head.x == GRID_SIZE-1 || head.y == GRID_SIZE-1){
+                    console.log("hit")
+                    hit = true;
+                }
+                placeCell({x:i,y:j},"orange")
+            }
+        }) 
+        return hit
+    }
+    let hitBody = ()=>{
+        for(let i=0; i<Snake.length ; i++){
+            if(i!=0){
+                if(equalCoords(head,Snake[i])){
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    return hitBoundary() || hitBody()
+}
+
+let timeCount = 0
+let scoreCount = 0
+let lastRenderTime = 0
+function animate(currentTime){
+    requestAnimationFrame(animate)
+    const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000
+    if(secondsSinceLastRender < 1 / SPEED) return
+    time.innerHTML = `Time: ${Math.floor(timeCount++ / SPEED)}`
+    let drawBoard = ()=>{
+        DFOR(GRID_SIZE,GRID_SIZE,(i,j)=>{
+            placeCell({x:i,y:j},BOARD_COLOR)
+        })
+    }
+    drawBoard()
+    let oldHeadPos = updateHead()
+    if(gameOver()){
+        if(!alert('game over!')){
+            window.location.reload()
+        }
+        
+        return
+    }
+    updateSnake(oldHeadPos)
+    placeCell(foodPos,FOOD_COLOR)
+    if(equalCoords(Snake[0],foodPos)){
+        score.innerHTML = `Score: ${++scoreCount}`
+        let tail = Snake.slice(-1)[0]
+        console.log(tail)
+        let newSegmentPos = new Pos(tail.x-inputDir.x, tail.y-inputDir.y)
+        Snake.push(newSegmentPos)
+        foodPos = getFood(Snake)
+        SPEED +=1
+    }
+    displaySnake(Snake)
+    lastRenderTime = currentTime
+
+}
+animate()
+
+
+
+document.body.addEventListener('keydown',(e)=>{
     let key = e.key
     switch(key){
-        case 'w' : snakeBody.x -= 1
+        case 'ArrowUp' : if(inputDir.y != 1){
+                        inputDir.x = 0
+                        inputDir.y = -1
+                    }
                 break;
-        case 's' : snakeBody.x += 1
+        case 'ArrowDown' :if(inputDir.y != -1){
+                        inputDir.x = 0
+                        inputDir.y = 1
+                    }
                 break;
-        case 'a' : snakeBody.y -= 1
+        case 'ArrowLeft' : if(inputDir.x != 1){
+                        inputDir.x = -1
+                        inputDir.y = 0
+                    }
                 break;
-        case 'd' : snakeBody.y += 1
+        case 'ArrowRight' : if(inputDir.x != -1){
+                        inputDir.x = 1
+                        inputDir.y = 0
+                    }
                 break;
-        default : return
+        default : break;
     }
-    snakeBodyArray.forEach((cell)=>{
-        cell.x = snakeBody.x
-        cell.y = snakeBody.y
-        placeSnake(board,cell.x,cell.y)
-    })
-    console.log(checkEat(snakeHead,foodPos))
 })
-
-
-
-
-
-
-
